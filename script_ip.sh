@@ -2,6 +2,8 @@
 
 DNS_SERVER="8.8.8.8"
 
+echo Alex
+
 verifica_host() {
     host=$1
     ip=$2
