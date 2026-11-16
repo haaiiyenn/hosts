@@ -1,17 +1,27 @@
 #!/bin/bash
+
+DNS_SERVER="8.8.8.8"
+
+verifica_host() {
+    host=$1
+    ip=$2
+    dns=$3
+
+    rezultat=$(dig +short A "$host" @"$dns")
+
+    if echo "$rezultat" | grep -Fxq "$ip"; then
+        echo "$host are IP-ul $ip"
+    else
+        echo "$host nu are IP-ul $ip"
+    fi
+}
+
 while read ip host
 do
-	if [[ $ip == \#* || -z $ip ]]; then
-		continue
-	fi
-
-	IFS='.' read -r a b c d <<< "$ip"
-
-    if [[ $a =~ ^[0-9]+$ && $b =~ ^[0-9]+$ && $c =~ ^[0-9]+$ && $d =~ ^[0-9]+$ ]] &&
-       (( a <= 255 && b <= 255 && c <= 255 && d <= 255 )); then
-        echo "$ip este valid"
-    else
-        echo "$ip este invalid"
+    if [[ $ip == \#* || -z $ip ]]; then
+        continue
     fi
+
+    verifica_host "$host" "$ip" "$DNS_SERVER"
 
 done < /etc/hosts
